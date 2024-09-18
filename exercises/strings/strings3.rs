@@ -7,17 +7,20 @@
 
 fn trim_me(input: &str) -> String {
     // TODO: Remove whitespace from both ends of a string!
-    ???
+    let res = input.trim();
+    res.to_string()
 }
 
 fn compose_me(input: &str) -> String {
     // TODO: Add " world!" to the string! There's multiple ways to do this!
-    ???
+    let res = [input," ","World!"].concat();
+    res
 }
 
 fn replace_me(input: &str) -> String {
     // TODO: Replace "cars" in the string with "balloons"!
-    ???
+    let res = input.replace("cars","balloons");
+    res.to_string()
 }
 
 #[cfg(test)]
