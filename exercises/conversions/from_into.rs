@@ -45,6 +45,13 @@ impl Default for Person {
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
     }
+
+    fn default() -> Person {
+        Person{
+            name: "John".to_string(),
+            age: 30
+        }
+    }
 }
 
 fn main() {
