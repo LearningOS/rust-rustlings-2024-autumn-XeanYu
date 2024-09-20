@@ -13,16 +13,6 @@ struct Person {
     age: usize,
 }
 
-// We implement the Default trait to use it as a fallback
-// when the provided string is not convertible into a Person object
-impl Default for Person {
-    fn default() -> Person {
-        Person {
-            name: String::from("John"),
-            age: 30,
-        }
-    }
-}
 
 // Your task is to complete this implementation in order for the line `let p =
 // Person::from("Mark,20")` to compile Please note that you'll need to parse the
@@ -40,20 +30,43 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of
 // Person Otherwise, then return an instantiated Person object with the results
 
-// I AM NOT DONE
+// I AM  DONE
 
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
-    }
+        if s.is_empty() {
+            return Person::default();
+        }
 
-    fn default() -> Person {
-        Person{
-            name: "John".to_string(),
-            age: 30
+        let parts: Vec<&str> = s.split(',').collect();
+        if parts.len() != 2 {
+            return Person::default();
+        }
+
+        let name = parts[0].trim();
+        if name.is_empty() {
+            return Person::default();
+        }
+
+        let age_result = parts[1].trim().parse::<usize>();
+        match age_result {
+            Ok(age) => Person {
+                name: name.to_string(),
+                age,
+            },
+            Err(_) => Person::default(),
         }
     }
 }
 
+impl Default for Person {
+    fn default() -> Person {
+        Person {
+            name: "John".to_string(),
+            age: 30,
+        }
+    }
+}
 fn main() {
     // Use the `from` function
     let p1 = Person::from("Mark,20");
