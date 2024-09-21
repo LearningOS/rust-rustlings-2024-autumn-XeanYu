@@ -2,8 +2,7 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
-
+// I AM DONE
 use std::cmp::Ord;
 use std::default::Default;
 
@@ -23,7 +22,7 @@ where
     pub fn new(comparator: fn(&T, &T) -> bool) -> Self {
         Self {
             count: 0,
-            items: vec![T::default()],
+            items: vec![T::default()], // Start with an extra default element to make 1-based indexing easier
             comparator,
         }
     }
@@ -37,7 +36,31 @@ where
     }
 
     pub fn add(&mut self, value: T) {
-        //TODO
+        self.items.push(value);
+        self.count += 1;
+        self.bubble_up(self.count); // Restore heap property
+    }
+
+    fn bubble_up(&mut self, mut idx: usize) {
+        while idx > 1 {
+            let parent_idx = self.parent_idx(idx); // Store parent index to avoid multiple borrows
+            if (self.comparator)(&self.items[idx], &self.items[parent_idx]) {
+                self.items.swap(idx, parent_idx);
+            } else {
+                break;
+            }
+            idx = parent_idx;
+        }
+    }
+
+    fn sink_down(&mut self, mut idx: usize) {
+        while self.children_present(idx) {
+            let smallest_child = self.smallest_child_idx(idx);
+            if (self.comparator)(&self.items[smallest_child], &self.items[idx]) {
+                self.items.swap(idx, smallest_child);
+            }
+            idx = smallest_child;
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -57,8 +80,13 @@ where
     }
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        //TODO
-		0
+        if self.right_child_idx(idx) > self.count {
+            self.left_child_idx(idx)
+        } else if (self.comparator)(&self.items[self.left_child_idx(idx)], &self.items[self.right_child_idx(idx)]) {
+            self.left_child_idx(idx)
+        } else {
+            self.right_child_idx(idx)
+        }
     }
 }
 
@@ -84,8 +112,16 @@ where
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+        if self.is_empty() {
+            return None;
+        }
+        let root = std::mem::replace(&mut self.items[1], T::default()); // Replace root with default value
+        self.items[1] = self.items.pop().unwrap_or_default(); // Replace root with the last element
+        self.count -= 1;
+        if !self.is_empty() {
+            self.sink_down(1); // Restore heap property
+        }
+        Some(root)
     }
 }
 
